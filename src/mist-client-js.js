@@ -2,121 +2,22 @@ var Mist,
   slice = [].slice;
 
 Mist = (function() {
-  var _backlog, _events, _log_levels;
-
-  _backlog = [];
-
-  _log_levels = ['DEBUG', 'INFO', 'WARN', 'ALERT', 'ERROR', 'SILENT'];
-
-  Mist.prototype.debug = function() {
-    var args, data, key;
-    key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-    return this.log({
-      level: 'DEBUG',
-      styles: 'color:#48B5DA',
-      key: key,
-      data: data,
-      args: args
-    });
-  };
-
-  Mist.prototype.info = function() {
-    var args, data, key;
-    key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-    return this.log({
-      level: 'INFO',
-      styles: 'color:#87C45A',
-      key: key,
-      data: data,
-      args: args
-    });
-  };
-
-  Mist.prototype.warn = function() {
-    var args, data, key;
-    key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-    return this.log({
-      level: 'WARN',
-      styles: 'color:#FCF1AB',
-      key: key,
-      data: data,
-      args: args
-    });
-  };
-
-  Mist.prototype.alert = function() {
-    var args, data, key;
-    key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-    return this.log({
-      level: 'ALERT',
-      styles: 'color:#FEA06B',
-      key: key,
-      data: data,
-      args: args
-    });
-  };
-
-  Mist.prototype.error = function() {
-    var args, data, key;
-    key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-    return this.log({
-      level: 'ERROR',
-      styles: 'color:#F22C68',
-      key: key,
-      data: data,
-      args: args
-    });
-  };
-
-  Mist.prototype.has_permission = function(level) {
-    return _log_levels.indexOf(this.LOG_LEVEL) <= _log_levels.indexOf(level);
-  };
-
-  Mist.prototype.log = function(options) {
-    var log;
-    log = {
-      level: options.level,
-      styles: options.styles,
-      key: options.key,
-      data: options.data,
-      args: options.args,
-      timestamp: new Date()
-    };
-    if (this.LOGS_ENABLED && this.has_permission(log.level)) {
-      console.log("%cMist.log:" + log.level + " ::", log.styles, log.key, log.data);
-    }
-    return _backlog.push(log);
-  };
-
-  Mist.prototype.backlog = function() {
-    var i, len, log, results;
-    results = [];
-    for (i = 0, len = _backlog.length; i < len; i++) {
-      log = _backlog[i];
-      results.push(console.log("%c(" + log.timestamp + ") Mist.backlog:" + log.level + " ::", log.styles, log.key + " - ", log.data));
-    }
-    return results;
-  };
-
-  Mist.prototype.enable_logs = function() {
-    this.warn("Mist logs enabled");
-    return this.LOGS_ENABLED = true;
-  };
-
-  Mist.prototype.disable_logs = function() {
-    this.warn("Mist logs disabled");
-    return this.LOGS_ENABLED = false;
-  };
-
   Mist._self = null;
 
-  function Mist(options1) {
-    this.options = options1 != null ? options1 : {};
+  function Mist(options) {
+    this.options = options != null ? options : {};
     if (this.constructor._self) {
       return this.constructor._self;
     }
-    this.LOGS_ENABLED = this.options.logs_enabled || false;
-    this.LOG_LEVEL = this.options.log_level || 'SILENT';
+    if (typeof Eventify === "undefined" || typeof Logify === "undefined") {
+      console.warn("You are missing the following dependencies: \n\t" + (typeof Eventify === 'undefined' ? 'Eventify (https://github.com/sdomino/eventify)' : '') + " \n\t" + (typeof Logify === 'undefined' ? 'Logify (https://github.com/sdomino/logify)' : '') + " \n\nMist will be unable to function properly until all dependencies are satisfied.");
+      return;
+    }
+    Eventify.assign(this);
+    Logify.assign(this);
+    this.logName = "[Mist]";
+    this.logLevel = this.options.logLevel || "DEBUG";
+    this.logsEnabled = this.options.logsEnabled || false;
     this.on("mist:_socket.onopen", (function(_this) {
       return function() {
         var args, evnt, key;
@@ -217,88 +118,6 @@ Mist = (function() {
     })(this));
     this.constructor._self = this;
   }
-
-  _events = {};
-
-  Mist.prototype._has_event = function(key) {
-    return _events[key] != null;
-  };
-
-  Mist.prototype._has_handler = function(key, handler) {
-    return _events[key].indexOf(handler) !== -1;
-  };
-
-  Mist.prototype._add_handler = function(key, handler) {
-    _events[key] || (_events[key] = []);
-    if (!this._has_handler(key, handler)) {
-      return _events[key].push(handler);
-    }
-  };
-
-  Mist.prototype._remove_handler = function(key, handler) {
-    if (!(this._has_event(key) && this._has_handler(key, handler))) {
-      return;
-    }
-    return _events[key].splice(_events[key].indexOf(handler), 1);
-  };
-
-  Mist.prototype.on = function(key, handler) {
-    if (!(key && handler)) {
-      return;
-    }
-    this._add_handler(key, handler);
-    return handler;
-  };
-
-  Mist.prototype.once = function(key, handler) {
-    var handler_wrapper;
-    handler_wrapper = (function(_this) {
-      return function() {
-        if (handler != null) {
-          handler.apply(_this, arguments);
-        }
-        return _this.off(key, handler_wrapper);
-      };
-    })(this);
-    return this.on(key, handler_wrapper);
-  };
-
-  Mist.prototype.off = function(key, handler) {
-    if (key && handler) {
-      return this._remove_handler(key, handler);
-    } else if (key) {
-      return delete _events[key];
-    } else {
-      return _events = {};
-    }
-  };
-
-  Mist.prototype.fire = function() {
-    var args, data, handler, i, key, len, ref;
-    key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-    if (!_events[key]) {
-      return;
-    }
-    ref = _events[key];
-    for (i = 0, len = ref.length; i < len; i++) {
-      handler = ref[i];
-      if (handler != null) {
-        handler.apply(this, [key, data, args]);
-      }
-    }
-    return true;
-  };
-
-  Mist.prototype.events = function(key) {
-    if (!key) {
-      return this.log("Registered Events - ", _events);
-    }
-    if (this._has_event(key)) {
-      return _events[key];
-    } else {
-      return this.log("Unknown event - ", key);
-    }
-  };
 
   Mist.prototype.connect = function(socket_url, reconnect) {
     var ref, ref1, ref2, ref3;

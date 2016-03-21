@@ -1,51 +1,25 @@
 ;class Mist
 
-  ## logs
-
-  _backlog = [  ]
-  _log_levels = [ 'DEBUG', 'INFO', 'WARN', 'ALERT', 'ERROR', 'SILENT' ]
-
-  debug : (key, data, args...) -> @log({ level: 'DEBUG', styles: 'color:#48B5DA', key: key, data: data, args: args })
-  info  : (key, data, args...) -> @log({ level: 'INFO',  styles: 'color:#87C45A', key: key, data: data, args: args })
-  warn  : (key, data, args...) -> @log({ level: 'WARN',  styles: 'color:#FCF1AB', key: key, data: data, args: args })
-  alert : (key, data, args...) -> @log({ level: 'ALERT', styles: 'color:#FEA06B', key: key, data: data, args: args })
-  error : (key, data, args...) -> @log({ level: 'ERROR', styles: 'color:#F22C68', key: key, data: data, args: args })
-
-  has_permission : (level) -> _log_levels.indexOf(@LOG_LEVEL) <= _log_levels.indexOf(level)
-
-  log : (options) ->
-    log = {
-      level:     options.level
-      styles:    options.styles
-      key:       options.key
-      data:      options.data
-      args:      options.args
-      timestamp: new Date()
-    }
-
-    console.log("%cMist.log:#{log.level} ::", log.styles, log.key, log.data) if @LOGS_ENABLED && @has_permission(log.level)
-
-    _backlog.push log
-
-  backlog : () ->
-    for log in _backlog
-      console.log("%c(#{log.timestamp}) Mist.backlog:#{log.level} ::", log.styles, "#{log.key} - ", log.data)
-
-  enable_logs : () -> @warn "Mist logs enabled"; @LOGS_ENABLED = true
-  disable_logs : () -> @warn "Mist logs disabled"; @LOGS_ENABLED = false
-
-
   # constructor
-
-  @_self = null
-
-  #
   constructor : ( @options={} ) ->
-    return @constructor._self if @constructor._self
 
-    #
-    @LOGS_ENABLED = @options.logs_enabled || false
-    @LOG_LEVEL    = @options.log_level || 'DEBUG'
+    # check for dependencies
+    if typeof(Eventify) == "undefined" || typeof(Logify) == "undefined"
+      console.warn "You are missing the following dependencies:
+        \n\t#{if typeof(Eventify) == 'undefined' then 'Eventify (https://github.com/sdomino/eventify)' else ''}
+        \n\t#{if typeof(Logify) == 'undefined' then 'Logify (https://github.com/sdomino/logify)' else ''}
+
+        \n\nThe Mist client will be unable to function properly until all dependencies are satisfied."
+      return
+
+    # add event capabilities
+    Eventify.enhance(@)
+
+    # add logging capabilities
+    Logify.enhance(@)
+    @logName = "[Mist]"
+    @logLevel = @options.logLevel || "DEBUG"
+    @logsEnabled = @options.logsEnabled || false
 
     #
     # @on "mist:authenticate.done",     (key, data, args...) => @debug key, data, args
@@ -70,64 +44,6 @@
     @on "mist:metadata.action:create",  (key, data, args...) => @debug key, data, args
     @on "mist:metadata.action:update",  (key, data, args...) => @debug key, data, args
     @on "mist:metadata.action:destroy", (key, data, args...) => @debug key, data, args
-
-    #
-    @constructor._self = @
-
-
-  ## events
-
-  _events = {}
-
-  # checks if a given [key] is a registered
-  _has_event : (key) -> _events[key]?
-
-  # checks if a given [handler] is registered on a [key]
-  _has_handler : (key, handler) -> _events[key].indexOf(handler) != -1
-
-  # add event handler unless it's already present
-  _add_handler : (key, handler) ->
-    _events[key] ||= []
-    _events[key].push handler unless @_has_handler(key, handler)
-
-  # removes given [handler] from [key]
-  _remove_handler: (key, handler) ->
-    return unless @_has_event(key) && @_has_handler(key, handler)
-    _events[key].splice(_events[key].indexOf(handler), 1)
-
-  # registers an event [handler] to a [key]
-  on : (key, handler) ->
-    return unless key && handler
-    @_add_handler(key, handler)
-    handler
-
-  # registers an event [handler] to a [key], which once called will be unregistered
-  once : (key, handler) ->
-    handler_wrapper = =>
-      handler?.apply(@, arguments)
-      @off(key, handler_wrapper)
-    @on(key, handler_wrapper)
-
-  # if [key] and [handler] are provided, unregister [handler] from [key]. If only
-  # [key] provided, unregister all [handler]s from [key]. If no arguments provided
-  # unregister all events
-  off : (key, handler) ->
-    if (key && handler) then @_remove_handler(key, handler)
-    else if key then delete _events[key]
-    else _events = {}
-
-  # fire an event by its registered [key]
-  fire : (key, data, args...) ->
-    return unless _events[key]
-    handler?.apply @, [key, data, args] for handler in _events[key]
-    true
-
-  # if [key] is provided, list all registered [handler]s for [key].
-  # If no [key] is provided, list all registered [key]s and corresponding [handler]s
-  events : (key) ->
-    return @log "Registered Events - ", _events unless key
-    if @_has_event(key) then _events[key] else @log "Unknown event - ", key
-
 
   ## api
 

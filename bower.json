@@ -1,17 +1,19 @@
 {
   "name": "mist-client-js",
   "version": "0.0.1",
+  "dependencies": {
+    "eventify": "sdomino/eventify",
+    "logify":"sdomino/logify"
+  },
   "ignore": [
-    "node_modules",
-    "src",
+    "**/.*",
     ".gitignore",
-    "example.*",
+    "bower_components",
     "gulpfile.*",
     "LICENSE",
+    "node_modules",
     "package.json",
     "README.md",
-    "**/.*"
-  ],
-  "dependencies": { },
-  "devDependencies": { }
+    "src"
+  ]
 }

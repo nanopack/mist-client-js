@@ -5,9 +5,7 @@ clean     = require 'gulp-clean'
 coffee    = require 'gulp-coffee'
 fs        = require 'fs'
 gutil     = require 'gulp-util'
-haml      = require 'gulp-haml'
-knox      = require 'knox'
-open      = require "gulp-open"
+jade      = require 'gulp-jade'
 prettify  = require 'gulp-prettify'
 rename    = require 'gulp-rename'
 uglify    = require 'gulp-uglify'
@@ -16,12 +14,12 @@ version = undefined
 
 #
 _markup = () ->
-  gulp.src("./src/index.html", { read: false })
+  gulp.src("./stage/index.html", { read: false })
     .pipe( clean({ force: true }),
-      gulp.src('./src/index.haml')
-        .pipe( haml() )
+      gulp.src('./stage/index.jade')
+        .pipe( jade() )
         .pipe( prettify() )
-        .pipe( gulp.dest('./src') )
+        .pipe( gulp.dest('./stage') )
     )
 
 #
@@ -55,32 +53,6 @@ _bump = (type) ->
     .pipe(gulp.dest('./'))
 
 #
-_publish = () ->
-  _version ( ->
-    file = "mist-client-js.#{version}.min.js"
-
-    fs.readFile "./dist/#{file}", (err, data) ->
-      return console.log "Unable to read file #{file} :: #{err}" if err
-
-      client = knox.createClient
-        key:      process.env['PAGODA_AWS_ACCESS_KEY_ID'],
-        secret:   process.env['PAGODA_AWS_SECRET_ACCESS_KEY'],
-        endpoint: 's3-us-west-2.amazonaws.com',
-        bucket:   'tools.nanopack.io'
-
-      req = client.put("mist-client-js.#{version}.min.js",
-        "Content-Length": data.length
-        "Content-Type": "application/javascript"
-      )
-
-      req.on "response", (res) ->
-        if res.statusCode == 200 then console.log "Saved #{file} to #{req.url}"
-        else console.log "Unable to save file #{file} :: [#{res.statusCode}]#{req.url}"
-
-      req.end data
-  )
-
-#
 _version = (cb) ->
   fs.readFile './package.json', (err, data) ->
     return console.log "Unable to read package.json :: #{err}" if err
@@ -91,7 +63,7 @@ _version = (cb) ->
 
 #
 _watch = () ->
-  gulp.watch "./src/*.haml", -> _markup()
+  gulp.watch "./stage/*.jade", -> _markup()
   gulp.watch "./src/*.coffee", -> _scripts()
 
 
