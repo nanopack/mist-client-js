@@ -1,7 +1,7 @@
 ;class Mist
 
   # constructor
-  constructor : ( @options={} ) ->
+  constructor : (@options={}) ->
 
     # check for dependencies
     if typeof(Eventify) == "undefined" || typeof(Logify) == "undefined"
