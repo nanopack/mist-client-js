@@ -70,6 +70,13 @@ Mist = (function() {
         return dash.debug(key, data, args);
       };
     })(this));
+    this.on("mist:command.publish", (function(_this) {
+      return function() {
+        var args, data, key;
+        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+        return dash.debug(key, data, args);
+      };
+    })(this));
     this.on("mist:command.list", (function(_this) {
       return function() {
         var args, data, key;
