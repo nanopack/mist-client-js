@@ -109,7 +109,6 @@
         catch
           dash.error "Failed to parse data: #{metadata}"
 
-
     # return the open socket
     @_socket
 
