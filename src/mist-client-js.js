@@ -70,7 +70,7 @@ Mist = (function() {
         return dash.debug(key, data, args);
       };
     })(this));
-    this.on("mist:command.subscriptions", (function(_this) {
+    this.on("mist:command.list", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
@@ -184,7 +184,7 @@ Mist = (function() {
                 }
               }
             } catch (error1) {
-              return dash.error("Failed to parse data: " + metadata);
+              return dash.debug("Unable to parse data - " + metadata);
             }
           }
         };
@@ -246,7 +246,7 @@ Mist = (function() {
     }
   };
 
-  Mist.prototype.subscriptions = function() {
+  Mist.prototype.list = function() {
     var ref;
     if (this.is_connected()) {
       if ((ref = this._socket) != null) {
