@@ -131,9 +131,9 @@ Mist = (function() {
     if ((ref = this._socket) != null) {
       ref.onopen = (function(_this) {
         return function(evnt) {
-          _this.fire('mist:_socket.onopen', evnt);
+          _this.fire("mist:_socket.onopen", evnt);
           if (reconnect) {
-            return _this.fire('mist:_socket.reconnect', evnt);
+            return _this.fire("mist:_socket.reconnect", evnt);
           }
         };
       })(this);
@@ -141,14 +141,14 @@ Mist = (function() {
     if ((ref1 = this._socket) != null) {
       ref1.onerror = (function(_this) {
         return function(evnt) {
-          return _this.fire('mist:_socket.onerror', evnt);
+          return _this.fire("mist:_socket.onerror", evnt);
         };
       })(this);
     }
     if ((ref2 = this._socket) != null) {
       ref2.onclose = (function(_this) {
         return function(evnt) {
-          return _this.fire('mist:_socket.onclose', evnt);
+          return _this.fire("mist:_socket.onclose", evnt);
         };
       })(this);
     }
@@ -156,28 +156,29 @@ Mist = (function() {
       ref3.onmessage = (function(_this) {
         return function(evnt) {
           var action, command, data, error, error1, i, len, metadata, ref4, tag;
-          _this.fire.apply(_this, ['mist:_socket.onmessage'].concat(slice.call(arguments)));
+          _this.fire.apply(_this, ["mist:_socket.onmessage"].concat(slice.call(arguments)));
           data = JSON.parse(evnt.data);
-          _this.fire('mist:data', data);
+          _this.fire("mist:data", data);
           if (error = data != null ? data.error : void 0) {
             _this.fire('mist:data.error', data.error);
           }
           if (command = data != null ? data.command : void 0) {
             switch (command) {
-              case 'ping':
+              case "ping":
                 _this.fire("mist:command.ping", data);
                 break;
-              case 'subscribe':
-                _this.fire('mist:command.subscribe', data);
+              case "subscribe":
+                _this.fire("mist:command.subscribe", data);
                 break;
-              case 'unsubscribe':
-                _this.fire('mist:command.unsubscribe', data);
+              case "unsubscribe":
+                _this.fire("mist:command.unsubscribe", data);
                 break;
-              case 'list':
+              case "list":
                 _this.fire("mist:command.list", data);
                 break;
               case 'publish':
                 _this.fire('mist:command.publish', data);
+                _this.fire("mist:command.publish:" + (data.tags.join()), data);
                 ref4 = data.tags;
                 for (i = 0, len = ref4.length; i < len; i++) {
                   tag = ref4[i];
@@ -190,12 +191,12 @@ Mist = (function() {
               metadata = JSON.parse(data != null ? data.data : void 0);
               if (action = metadata.action) {
                 switch (action) {
-                  case 'create':
-                    return _this.fire('mist:metadata.action:create', data);
-                  case 'update':
-                    return _this.fire('mist:metadata.action:update', data);
-                  case 'destroy':
-                    return _this.fire('mist:metadata.action:destroy', data);
+                  case "create":
+                    return _this.fire("mist:metadata.action:create", data);
+                  case "update":
+                    return _this.fire("mist:metadata.action:update", data);
+                  case "destroy":
+                    return _this.fire("mist:metadata.action:destroy", data);
                 }
               }
             } catch (error1) {
@@ -226,7 +227,7 @@ Mist = (function() {
     if (this.is_connected()) {
       if ((ref = this._socket) != null) {
         ref.send(JSON.stringify({
-          command: 'subscribe',
+          command: "subscribe",
           tags: tags
         }));
       }
@@ -248,7 +249,7 @@ Mist = (function() {
     if (this.is_connected()) {
       if ((ref = this._socket) != null) {
         ref.send(JSON.stringify({
-          command: 'unsubscribe',
+          command: "unsubscribe",
           tags: tags
         }));
       }
@@ -266,7 +267,7 @@ Mist = (function() {
     if (this.is_connected()) {
       if ((ref = this._socket) != null) {
         ref.send(JSON.stringify({
-          command: 'list'
+          command: "list"
         }));
       }
     } else {
@@ -282,26 +283,26 @@ Mist = (function() {
     var ref, ref1;
     switch ((ref = this._socket) != null ? ref.readyState : void 0) {
       case 0:
-        return 'not connected';
+        return "not connected";
       case 1:
-        return 'open';
+        return "open";
       case 2:
-        return 'closing';
+        return "closing";
       case 3:
-        return 'closed';
+        return "closed";
       default:
         return "unknown state - " + ((ref1 = this._socket) != null ? ref1.readyState : void 0);
     }
   };
 
   Mist.prototype.is_connected = function() {
-    return this.state() === 'open';
+    return this.state() === "open";
   };
 
   Mist.prototype.ping = function() {
     var ref;
     return (ref = this._socket) != null ? ref.send(JSON.stringify({
-      command: 'ping'
+      command: "ping"
     })) : void 0;
   };
 

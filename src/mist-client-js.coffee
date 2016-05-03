@@ -67,15 +67,15 @@
     @_socket = new WebSocket( socket_url )
 
     #
-    @_socket?.onopen    = (evnt) => @fire 'mist:_socket.onopen', evnt; if reconnect then @fire 'mist:_socket.reconnect', evnt
-    @_socket?.onerror   = (evnt) => @fire 'mist:_socket.onerror', evnt
-    @_socket?.onclose   = (evnt) => @fire 'mist:_socket.onclose', evnt
+    @_socket?.onopen    = (evnt) => @fire "mist:_socket.onopen", evnt; if reconnect then @fire "mist:_socket.reconnect", evnt
+    @_socket?.onerror   = (evnt) => @fire "mist:_socket.onerror", evnt
+    @_socket?.onclose   = (evnt) => @fire "mist:_socket.onclose", evnt
     @_socket?.onmessage = (evnt) =>
-      @fire 'mist:_socket.onmessage', arguments...
+      @fire "mist:_socket.onmessage", arguments...
 
       # "data":"{\"key\":\"value\", ... }"
       data = JSON.parse evnt.data
-      @fire 'mist:data', data
+      @fire "mist:data", data
 
       #
       if error = data?.error then @fire 'mist:data.error', data.error
@@ -83,15 +83,17 @@
       ## handle mist commands
       if command = data?.command
         switch command
-          when 'ping'        then @fire "mist:command.ping", data
-          when 'subscribe'   then @fire 'mist:command.subscribe', data
-          when 'unsubscribe' then @fire 'mist:command.unsubscribe', data
-          when 'list'        then @fire "mist:command.list", data
+          when "ping"        then @fire "mist:command.ping", data
+          when "subscribe"   then @fire "mist:command.subscribe", data
+          when "unsubscribe" then @fire "mist:command.unsubscribe", data
+          when "list"        then @fire "mist:command.list", data
 
-          # on the publish command we want to send a generic publish event but
-          # also sent a specific event for each tag that was published
+          # on the publish command we want to fire a generic publish event but
+          # also fire an event for all tags and each specific tag; this way
+          # anyone consuming these events can get exactly what they want
           when 'publish'
             @fire 'mist:command.publish', data
+            @fire "mist:command.publish:#{data.tags.join()}", data
             @fire "mist:command.publish:#{tag}", data for tag in data.tags
 
 
@@ -109,9 +111,9 @@
           ## handle actions
           if action = metadata.action
             switch action
-              when 'create' then @fire 'mist:metadata.action:create', data
-              when 'update' then @fire 'mist:metadata.action:update', data
-              when 'destroy' then @fire 'mist:metadata.action:destroy', data
+              when "create" then @fire "mist:metadata.action:create", data
+              when "update" then @fire "mist:metadata.action:update", data
+              when "destroy" then @fire "mist:metadata.action:destroy", data
 
         # this mostlikely happens when there IS data but its formatted incorrectly
         catch
@@ -130,33 +132,33 @@
 
   # subscribe attempts to subscribe the given tags, then returns those tags
   subscribe : (tags=[]) ->
-    if @is_connected() then @_socket?.send JSON.stringify({command:'subscribe', tags:tags})
+    if @is_connected() then @_socket?.send JSON.stringify({command:"subscribe", tags:tags})
     else @once "mist:_socket.onopen", (e) => @subscribe(tags)
     tags
 
   # unsubscribe attempts to unsubscribe the given tags
   unsubscribe : (tags=[]) ->
-    if @is_connected() then @_socket?.send JSON.stringify({command:'unsubscribe', tags:tags})
+    if @is_connected() then @_socket?.send JSON.stringify({command:"unsubscribe", tags:tags})
     else @once "mist:_socket.onopen", (e) => @unsubscribe(tags)
     return
 
   # list returns a list of currently subscribed tags
   list : () ->
-    if @is_connected() then @_socket?.send JSON.stringify({command:'list'})
+    if @is_connected() then @_socket?.send JSON.stringify({command:"list"})
     else @once "mist:_socket.onopen", (e) => @list()
     return
 
   # state returns the state of the websocket
   state : () ->
     switch @_socket?.readyState
-      when 0 then 'not connected'
-      when 1 then 'open'
-      when 2 then 'closing'
-      when 3 then 'closed'
+      when 0 then "not connected"
+      when 1 then "open"
+      when 2 then "closing"
+      when 3 then "closed"
       else "unknown state - #{@_socket?.readyState}"
 
   # returns whether or not the connection is open
-  is_connected : () -> (@state() == 'open')
+  is_connected : () -> (@state() == "open")
 
   # ping tests the connection to the server
-  ping : () -> @_socket?.send JSON.stringify({command:'ping'})
+  ping : () -> @_socket?.send JSON.stringify({command:"ping"})
