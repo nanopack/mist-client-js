@@ -106,7 +106,8 @@
               when 'destroy' then @fire 'mist:metadata.action:destroy', data
 
         # this mostlikely happens when there IS data but its formatted incorrectly
-        catch dash.error "Failed to parse data: #{metadata}"
+        catch
+          dash.error "Failed to parse data: #{metadata}"
 
 
     # return the open socket

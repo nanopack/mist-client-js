@@ -9,7 +9,7 @@ Mist = (function() {
       return;
     }
     Eventify.extend(this);
-    dash.setPrefix("[Mist]");
+    dash.setPrefix("Mist");
     dash.setLevel(this.options.logLevel || "DEBUG");
     if (this.options.logsEnabled) {
       dash.enableLogs();
@@ -148,7 +148,7 @@ Mist = (function() {
     if ((ref3 = this._socket) != null) {
       ref3.onmessage = (function(_this) {
         return function(evnt) {
-          var action, command, data, error, metadata;
+          var action, command, data, error, error1, metadata;
           _this.fire.apply(_this, ['mist:_socket.onmessage'].concat(slice.call(arguments)));
           data = JSON.parse(evnt.data);
           _this.fire('mist:data', data);
@@ -170,16 +170,21 @@ Mist = (function() {
                 _this.fire("mist:command.subscriptions", data.subscriptions);
             }
           }
-          if (metadata = JSON.parse((data != null ? data.data : void 0) || false)) {
-            if (action = metadata.action) {
-              switch (action) {
-                case 'create':
-                  return _this.fire('mist:metadata.action:create', data);
-                case 'update':
-                  return _this.fire('mist:metadata.action:update', data);
-                case 'destroy':
-                  return _this.fire('mist:metadata.action:destroy', data);
+          if (data != null ? data.data : void 0) {
+            try {
+              metadata = JSON.parse(data != null ? data.data : void 0);
+              if (action = metadata.action) {
+                switch (action) {
+                  case 'create':
+                    return _this.fire('mist:metadata.action:create', data);
+                  case 'update':
+                    return _this.fire('mist:metadata.action:update', data);
+                  case 'destroy':
+                    return _this.fire('mist:metadata.action:destroy', data);
+                }
               }
+            } catch (error1) {
+              return dash.error("Failed to parse data: " + metadata);
             }
           }
         };
