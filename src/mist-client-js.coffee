@@ -16,13 +16,13 @@
     Eventify.extend(@)
 
     # add logging capabilities
-    dash.setPrefix("[Mist]")
+    dash.setPrefix("Mist")
     dash.setLevel(@options.logLevel || "DEBUG")
     if @options.logsEnabled then dash.enableLogs()
 
     #
-    # @on "mist:authenticate.done",     (key, data, args...) => @debug key, data, args
-    # @on "mist:authenticate.fail",     (key, data, args...) => @warn key, data, args
+    # @on "mist:authenticate.done",     (key, data, args...) => dash.debug key, data, args
+    # @on "mist:authenticate.fail",     (key, data, args...) => dash.warn key, data, args
 
     # socket messages
     @on "mist:_socket.onopen",          (key, evnt, args...) => dash.debug key, evnt, args
@@ -72,14 +72,12 @@
     @_socket?.onmessage = (evnt) =>
       @fire 'mist:_socket.onmessage', arguments...
 
-      data = JSON.parse evnt.data
       # "data":"{\"key\":\"value\", ... }"
-
+      data = JSON.parse evnt.data
       @fire 'mist:data', data
 
       #
       if error = data?.error then @fire 'mist:data.error', data.error
-
 
       ## handle mist commands
       if command = data?.command
@@ -89,19 +87,27 @@
           when 'unsubscribe' then @fire 'mist:command.unsubscribe', data
           when 'list'        then @fire "mist:command.subscriptions", data.subscriptions
 
-
       ## handle metadata; metadata is data that is specifically formatted to be
       # interpereted as "model" data. It will provide the name of a model, the
       # action the model is performing, and any related data.
-      if metadata = JSON.parse( data?.data || false )
-        # "data":"{\"data\":{\"model\":\"Model\",\"action\":\"update\", \"document\":{\"key\":\"value\", ...}}}"
+      if data?.data
 
-        ## handle application actions
-        if action = metadata.action
-          switch action
-            when 'create' then @fire 'mist:metadata.action:create', data
-            when 'update' then @fire 'mist:metadata.action:update', data
-            when 'destroy' then @fire 'mist:metadata.action:destroy', data
+        #
+        try
+
+          # "data":"{\"data\":{\"model\":\"Model\",\"action\":\"update\", \"document\":{\"key\":\"value\", ...}}}"
+          metadata = JSON.parse(data?.data)
+
+          ## handle actions
+          if action = metadata.action
+            switch action
+              when 'create' then @fire 'mist:metadata.action:create', data
+              when 'update' then @fire 'mist:metadata.action:update', data
+              when 'destroy' then @fire 'mist:metadata.action:destroy', data
+
+        # this mostlikely happens when there IS data but its formatted incorrectly
+        catch dash.error "Failed to parse data: #{metadata}"
+
 
     # return the open socket
     @_socket
@@ -114,7 +120,7 @@
   # close the websocket
   disconnect : () -> @_socket?.close()
 
-  # subscribe attempts to subscribe the given tags
+  # subscribe attempts to subscribe the given tags, then returns those tags
   subscribe : (tags=[]) ->
     if @is_connected() then @_socket?.send JSON.stringify( { command:'subscribe', tags:tags } )
     else @once "mist:_socket.onopen", (e) => @subscribe(tags)
