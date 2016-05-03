@@ -4,46 +4,45 @@
   constructor : (@options={}) ->
 
     # check for dependencies
-    if typeof(Eventify) == "undefined" || typeof(Logify) == "undefined"
+    if typeof(Eventify) == "undefined" || typeof(dash) == "undefined"
       console.warn "You are missing the following dependencies:
         \n\t#{if typeof(Eventify) == 'undefined' then 'Eventify (https://github.com/sdomino/eventify)' else ''}
-        \n\t#{if typeof(Logify) == 'undefined' then 'Logify (https://github.com/sdomino/logify)' else ''}
+        \n\t#{if typeof(dash) == 'undefined' then 'Dash (https://github.com/sdomino/dash)' else ''}
 
         \n\nThe Mist client will be unable to function properly until all dependencies are satisfied."
       return
 
     # add event capabilities
-    Eventify.enhance(@)
+    Eventify.extend(@)
 
     # add logging capabilities
-    Logify.enhance(@)
-    @logName = "[Mist]"
-    @logLevel = @options.logLevel || "DEBUG"
-    @logsEnabled = @options.logsEnabled || false
+    dash.setPrefix("[Mist]")
+    dash.setLevel(@options.logLevel || "DEBUG")
+    if @options.logsEnabled then dash.enableLogs()
 
     #
     # @on "mist:authenticate.done",     (key, data, args...) => @debug key, data, args
     # @on "mist:authenticate.fail",     (key, data, args...) => @warn key, data, args
 
     # socket messages
-    @on "mist:_socket.onopen",          (key, evnt, args...) => @debug key, evnt, args
-    @on "mist:_socket.reconnect",       (key, evnt, args...) => @debug key, evnt, args
-    @on "mist:_socket.onmessage",       (key, evnt, args...) => @info key, evnt, args
-    @on "mist:_socket.onerror",         (key, evnt, args...) => @error key, evnt, args
-    @on "mist:_socket.onclose",         (key, evnt, args...) => @debug key, evnt, args
+    @on "mist:_socket.onopen",          (key, evnt, args...) => dash.debug key, evnt, args
+    @on "mist:_socket.reconnect",       (key, evnt, args...) => dash.debug key, evnt, args
+    @on "mist:_socket.onmessage",       (key, evnt, args...) => dash.info key, evnt, args
+    @on "mist:_socket.onerror",         (key, evnt, args...) => dash.error key, evnt, args
+    @on "mist:_socket.onclose",         (key, evnt, args...) => dash.debug key, evnt, args
 
     # command messages
-    @on "mist:command.ping",            (key, data, args...) => @debug key, data, args
-    @on "mist:command.subscribe",       (key, data, args...) => @debug key, data, args
-    @on "mist:command.unsubscribe",     (key, data, args...) => @debug key, data, args
-    @on "mist:command.subscriptions",   (key, data, args...) => console.log("%cMist.log ::", key, data)
+    @on "mist:command.ping",            (key, data, args...) => dash.debug key, data, args
+    @on "mist:command.subscribe",       (key, data, args...) => dash.debug key, data, args
+    @on "mist:command.unsubscribe",     (key, data, args...) => dash.debug key, data, args
+    @on "mist:command.subscriptions",   (key, data, args...) => dash.log("%cMist.log ::", key, data)
 
     # data messages
-    @on "mist:data",                    (key, data, args...) => @debug key, data, args
-    @on "mist:data.error",              (key, data, args...) => @error key, data, args
-    @on "mist:metadata.action:create",  (key, data, args...) => @debug key, data, args
-    @on "mist:metadata.action:update",  (key, data, args...) => @debug key, data, args
-    @on "mist:metadata.action:destroy", (key, data, args...) => @debug key, data, args
+    @on "mist:data",                    (key, data, args...) => dash.debug key, data, args
+    @on "mist:data.error",              (key, data, args...) => dash.error key, data, args
+    @on "mist:metadata.action:create",  (key, data, args...) => dash.debug key, data, args
+    @on "mist:metadata.action:update",  (key, data, args...) => dash.debug key, data, args
+    @on "mist:metadata.action:destroy", (key, data, args...) => dash.debug key, data, args
 
   ## api
 
