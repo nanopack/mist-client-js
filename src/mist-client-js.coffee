@@ -35,6 +35,7 @@
     @on "mist:command.ping",            (key, data, args...) => dash.debug key, data, args
     @on "mist:command.subscribe",       (key, data, args...) => dash.debug key, data, args
     @on "mist:command.unsubscribe",     (key, data, args...) => dash.debug key, data, args
+    @on "mist:command.publish",         (key, data, args...) => dash.debug key, data, args
     @on "mist:command.list",            (key, data, args...) => dash.log("%cMist.log ::", key, data)
 
     # data messages
@@ -85,7 +86,14 @@
           when 'ping'        then @fire "mist:command.ping", data
           when 'subscribe'   then @fire 'mist:command.subscribe', data
           when 'unsubscribe' then @fire 'mist:command.unsubscribe', data
-          when 'list'        then @fire "mist:command.subscriptions", data.subscriptions
+          when 'list'        then @fire "mist:command.list", data
+
+          # on the publish command we want to send a generic publish event but
+          # also sent a specific event for each tag that was published
+          when 'publish'
+            @fire 'mist:command.publish', data
+            @fire "mist:command.publish:#{tag}", data for tag in data.tags
+
 
       ## handle metadata; metadata is data that is specifically formatted to be
       # interpereted as "model" data. It will provide the name of a model, the
@@ -135,7 +143,7 @@
   # list returns a list of currently subscribed tags
   list : () ->
     if @is_connected() then @_socket?.send JSON.stringify({command:'list'})
-    else @once "mist:_socket.onopen", (e) => @subscriptions()
+    else @once "mist:_socket.onopen", (e) => @list()
     return
 
   # state returns the state of the websocket

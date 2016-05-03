@@ -148,7 +148,7 @@ Mist = (function() {
     if ((ref3 = this._socket) != null) {
       ref3.onmessage = (function(_this) {
         return function(evnt) {
-          var action, command, data, error, error1, metadata;
+          var action, command, data, error, error1, i, len, metadata, ref4, tag;
           _this.fire.apply(_this, ['mist:_socket.onmessage'].concat(slice.call(arguments)));
           data = JSON.parse(evnt.data);
           _this.fire('mist:data', data);
@@ -167,7 +167,15 @@ Mist = (function() {
                 _this.fire('mist:command.unsubscribe', data);
                 break;
               case 'list':
-                _this.fire("mist:command.subscriptions", data.subscriptions);
+                _this.fire("mist:command.list", data);
+                break;
+              case 'publish':
+                _this.fire('mist:command.publish', data);
+                ref4 = data.tags;
+                for (i = 0, len = ref4.length; i < len; i++) {
+                  tag = ref4[i];
+                  _this.fire("mist:command.publish:" + tag, data);
+                }
             }
           }
           if (data != null ? data.data : void 0) {
@@ -257,7 +265,7 @@ Mist = (function() {
     } else {
       this.once("mist:_socket.onopen", (function(_this) {
         return function(e) {
-          return _this.subscriptions();
+          return _this.list();
         };
       })(this));
     }
