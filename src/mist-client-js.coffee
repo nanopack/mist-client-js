@@ -96,7 +96,6 @@
             @fire "mist:command.publish:#{data.tags.join()}", data
             @fire "mist:command.publish:#{tag}", data for tag in data.tags
 
-
       ## handle metadata; metadata is data that is specifically formatted to be
       # interpereted as "model" data. It will provide the name of a model, the
       # action the model is performing, and any related data.
