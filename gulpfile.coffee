@@ -70,6 +70,6 @@ _watch = () ->
 ## tasks
 gulp.task 'bump', () -> _bump(gulp.env.type)
 gulp.task 'compile', () -> _markup(); _scripts()
-gulp.task 'publish', () -> _publish()
 
+# 
 gulp.task 'default', [ 'compile' ], -> _watch()
