@@ -103,7 +103,7 @@ Below is a list of all of the events that the mist client will fire:
 | `mist:command.ping` | mist is pinged |
 | `mist:command.subscribe` | tags are subscribed |
 | `mist:command.unsubscribe` | tags are unsubscribed |
-| `mist:command.subscriptions` | subscriptions are listed |
+| `mist:command.list` | subscriptions are listed |
 | `mist:data` | a mist message is received (parses data) |
 | `mist:data.error` | parsed data is/has an error |
 | `mist:metadata.action:create` | metadata is created |

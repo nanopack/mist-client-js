@@ -35,7 +35,7 @@
     @on "mist:command.ping",            (key, data, args...) => dash.debug key, data, args
     @on "mist:command.subscribe",       (key, data, args...) => dash.debug key, data, args
     @on "mist:command.unsubscribe",     (key, data, args...) => dash.debug key, data, args
-    @on "mist:command.subscriptions",   (key, data, args...) => dash.log("%cMist.log ::", key, data)
+    @on "mist:command.list",            (key, data, args...) => dash.log("%cMist.log ::", key, data)
 
     # data messages
     @on "mist:data",                    (key, data, args...) => dash.debug key, data, args
@@ -107,7 +107,7 @@
 
         # this mostlikely happens when there IS data but its formatted incorrectly
         catch
-          dash.error "Failed to parse data: #{metadata}"
+          dash.debug "Unable to parse data - #{metadata}"
 
     # return the open socket
     @_socket
@@ -122,19 +122,19 @@
 
   # subscribe attempts to subscribe the given tags, then returns those tags
   subscribe : (tags=[]) ->
-    if @is_connected() then @_socket?.send JSON.stringify( { command:'subscribe', tags:tags } )
+    if @is_connected() then @_socket?.send JSON.stringify({command:'subscribe', tags:tags})
     else @once "mist:_socket.onopen", (e) => @subscribe(tags)
     tags
 
   # unsubscribe attempts to unsubscribe the given tags
   unsubscribe : (tags=[]) ->
-    if @is_connected() then @_socket?.send JSON.stringify( { command:'unsubscribe', tags:tags } )
+    if @is_connected() then @_socket?.send JSON.stringify({command:'unsubscribe', tags:tags})
     else @once "mist:_socket.onopen", (e) => @unsubscribe(tags)
     return
 
-  # subscriptions returns a list of currently subscribed tags
-  subscriptions : () ->
-    if @is_connected() then @_socket?.send JSON.stringify( { command:'list' } )
+  # list returns a list of currently subscribed tags
+  list : () ->
+    if @is_connected() then @_socket?.send JSON.stringify({command:'list'})
     else @once "mist:_socket.onopen", (e) => @subscriptions()
     return
 
@@ -151,4 +151,4 @@
   is_connected : () -> (@state() == 'open')
 
   # ping tests the connection to the server
-  ping : () -> @_socket?.send JSON.stringify( { command:'ping' } )
+  ping : () -> @_socket?.send JSON.stringify({command:'ping'})
