@@ -104,7 +104,7 @@ Below is a list of all of the events that the mist client will fire:
 | `mist:command.subscribe` | tags are subscribed |
 | `mist:command.unsubscribe` | tags are unsubscribed |
 | `mist:command.publish` | tags are published |
-| `mist:command.publish:tag,tag,tag` | specific tags are published |
+| `mist:command.publish:[tag,tag,tag]` | specific tags are published |
 | `mist:command.publish:tag` | for each specific tag |
 | `mist:command.list` | subscriptions are listed |
 | `mist:data` | a mist message is received (parses data) |

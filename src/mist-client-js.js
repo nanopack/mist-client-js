@@ -178,7 +178,7 @@ Mist = (function() {
                 break;
               case 'publish':
                 _this.fire('mist:command.publish', data);
-                _this.fire("mist:command.publish:" + (data.tags.join()), data);
+                _this.fire("mist:command.publish:[" + (data.tags.join()) + "]", data);
                 ref4 = data.tags;
                 for (i = 0, len = ref4.length; i < len; i++) {
                   tag = ref4[i];

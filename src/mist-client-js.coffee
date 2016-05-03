@@ -93,7 +93,7 @@
           # anyone consuming these events can get exactly what they want
           when 'publish'
             @fire 'mist:command.publish', data
-            @fire "mist:command.publish:#{data.tags.join()}", data
+            @fire "mist:command.publish:[#{data.tags.join()}]", data
             @fire "mist:command.publish:#{tag}", data for tag in data.tags
 
       ## handle metadata; metadata is data that is specifically formatted to be
