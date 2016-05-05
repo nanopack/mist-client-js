@@ -16,34 +16,35 @@
     Eventify.extend(@)
 
     # add logging capabilities
-    dash.setPrefix("Mist")
-    dash.setLevel(@options.logLevel || "DEBUG")
-    if @options.logsEnabled then dash.enableLogs()
+    @dash = new dash()
+    @dash.setPrefix("Mist")
+    @dash.setLevel(@options.logLevel || "DEBUG")
+    if @options.logsEnabled then @dash.enableLogs()
 
     #
-    # @on "mist:authenticate.done",     (key, data, args...) => dash.debug key, data, args
-    # @on "mist:authenticate.fail",     (key, data, args...) => dash.warn key, data, args
+    # @on "mist:authenticate.done",     (key, data, args...) => @dash.debug key, data, args
+    # @on "mist:authenticate.fail",     (key, data, args...) => @dash.warn key, data, args
 
     # socket messages
-    @on "mist:_socket.onopen",          (key, evnt, args...) => dash.debug key, evnt, args
-    @on "mist:_socket.reconnect",       (key, evnt, args...) => dash.debug key, evnt, args
-    @on "mist:_socket.onmessage",       (key, evnt, args...) => dash.debug key, evnt, args
-    @on "mist:_socket.onerror",         (key, evnt, args...) => dash.error key, evnt, args
-    @on "mist:_socket.onclose",         (key, evnt, args...) => dash.debug key, evnt, args
+    @on "mist:_socket.onopen",          (key, data, args...) => @dash.debug key, data, args
+    @on "mist:_socket.reconnect",       (key, data, args...) => @dash.debug key, data, args
+    @on "mist:_socket.onmessage",       (key, data, args...) => @dash.debug key, data, args
+    @on "mist:_socket.onerror",         (key, data, args...) => @dash.error key, data, args
+    @on "mist:_socket.onclose",         (key, data, args...) => @dash.debug key, data, args
 
     # command messages
-    @on "mist:command.ping",            (key, data, args...) => dash.debug key, data, args
-    @on "mist:command.subscribe",       (key, data, args...) => dash.debug key, data, args
-    @on "mist:command.unsubscribe",     (key, data, args...) => dash.debug key, data, args
-    @on "mist:command.publish",         (key, data, args...) => dash.debug key, data, args
-    @on "mist:command.list",            (key, data, args...) => dash.debug(key, data, args)
+    @on "mist:command.ping",            (key, data, args...) => @dash.debug key, data, args
+    @on "mist:command.subscribe",       (key, data, args...) => @dash.debug key, data, args
+    @on "mist:command.unsubscribe",     (key, data, args...) => @dash.debug key, data, args
+    @on "mist:command.publish",         (key, data, args...) => @dash.debug key, data, args
+    @on "mist:command.list",            (key, data, args...) => @dash.debug(key, data, args)
 
     # data messages
-    @on "mist:data",                    (key, data, args...) => dash.debug key, data, args
-    @on "mist:data.error",              (key, data, args...) => dash.error key, data, args
-    @on "mist:metadata.action:create",  (key, data, args...) => dash.debug key, data, args
-    @on "mist:metadata.action:update",  (key, data, args...) => dash.debug key, data, args
-    @on "mist:metadata.action:destroy", (key, data, args...) => dash.debug key, data, args
+    @on "mist:data",                    (key, data, args...) => @dash.debug key, data, args
+    @on "mist:data.error",              (key, data, args...) => @dash.error key, data, args
+    @on "mist:metadata.action:create",  (key, data, args...) => @dash.debug key, data, args
+    @on "mist:metadata.action:update",  (key, data, args...) => @dash.debug key, data, args
+    @on "mist:metadata.action:destroy", (key, data, args...) => @dash.debug key, data, args
 
   ## api
 

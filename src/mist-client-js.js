@@ -9,114 +9,115 @@ Mist = (function() {
       return;
     }
     Eventify.extend(this);
-    dash.setPrefix("Mist");
-    dash.setLevel(this.options.logLevel || "DEBUG");
+    this.dash = new dash();
+    this.dash.setPrefix("Mist");
+    this.dash.setLevel(this.options.logLevel || "DEBUG");
     if (this.options.logsEnabled) {
-      dash.enableLogs();
+      this.dash.enableLogs();
     }
     this.on("mist:_socket.onopen", (function(_this) {
       return function() {
-        var args, evnt, key;
-        key = arguments[0], evnt = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, evnt, args);
+        var args, data, key;
+        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:_socket.reconnect", (function(_this) {
       return function() {
-        var args, evnt, key;
-        key = arguments[0], evnt = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, evnt, args);
+        var args, data, key;
+        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:_socket.onmessage", (function(_this) {
       return function() {
-        var args, evnt, key;
-        key = arguments[0], evnt = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, evnt, args);
+        var args, data, key;
+        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:_socket.onerror", (function(_this) {
       return function() {
-        var args, evnt, key;
-        key = arguments[0], evnt = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.error(key, evnt, args);
+        var args, data, key;
+        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+        return _this.dash.error(key, data, args);
       };
     })(this));
     this.on("mist:_socket.onclose", (function(_this) {
       return function() {
-        var args, evnt, key;
-        key = arguments[0], evnt = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, evnt, args);
+        var args, data, key;
+        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:command.ping", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:command.subscribe", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:command.unsubscribe", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:command.publish", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:command.list", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:data", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:data.error", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.error(key, data, args);
+        return _this.dash.error(key, data, args);
       };
     })(this));
     this.on("mist:metadata.action:create", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:metadata.action:update", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:metadata.action:destroy", (function(_this) {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.debug(key, data, args);
+        return _this.dash.debug(key, data, args);
       };
     })(this));
   }
