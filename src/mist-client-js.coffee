@@ -117,7 +117,7 @@
 
         # this mostlikely happens when there IS data but its formatted incorrectly
         catch
-          dash.debug "Unable to parse data - #{metadata}"
+          @dash.debug "Unable to parse data - #{metadata}"
 
     # return the open socket
     @_socket
