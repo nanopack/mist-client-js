@@ -1,5 +1,4 @@
 gulp      = require 'gulp'
-
 bump      = require 'gulp-bump'
 clean     = require 'gulp-clean'
 coffee    = require 'gulp-coffee'
@@ -10,6 +9,7 @@ prettify  = require 'gulp-prettify'
 rename    = require 'gulp-rename'
 uglify    = require 'gulp-uglify'
 
+#
 version = undefined
 
 #

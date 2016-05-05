@@ -8,8 +8,8 @@ Creating a new client is very easy, and only has a small amount of configurable 
 
 # NOTE: by default logs are disabled and set to "DEBUG"
 options = {
-  logsEnabled : true
-  logLevel : "INFO" # 'DEBUG', 'INFO', 'WARN', 'ALERT', 'ERROR', 'SILENT'
+  logsEnabled: true
+  logLevel:    "INFO" # 'DEBUG', 'INFO', 'WARN', 'ALERT', 'ERROR', 'SILENT'
 }
 
 #
