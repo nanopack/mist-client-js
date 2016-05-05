@@ -201,7 +201,7 @@ Mist = (function() {
                 }
               }
             } catch (error1) {
-              return dash.debug("Unable to parse data - " + metadata);
+              return _this.dash.debug("Unable to parse data - " + metadata);
             }
           }
         };
