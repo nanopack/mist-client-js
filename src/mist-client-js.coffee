@@ -27,7 +27,7 @@
     # socket messages
     @on "mist:_socket.onopen",          (key, evnt, args...) => dash.debug key, evnt, args
     @on "mist:_socket.reconnect",       (key, evnt, args...) => dash.debug key, evnt, args
-    @on "mist:_socket.onmessage",       (key, evnt, args...) => dash.info key, evnt, args
+    @on "mist:_socket.onmessage",       (key, evnt, args...) => dash.debug key, evnt, args
     @on "mist:_socket.onerror",         (key, evnt, args...) => dash.error key, evnt, args
     @on "mist:_socket.onclose",         (key, evnt, args...) => dash.debug key, evnt, args
 
@@ -36,7 +36,7 @@
     @on "mist:command.subscribe",       (key, data, args...) => dash.debug key, data, args
     @on "mist:command.unsubscribe",     (key, data, args...) => dash.debug key, data, args
     @on "mist:command.publish",         (key, data, args...) => dash.debug key, data, args
-    @on "mist:command.list",            (key, data, args...) => dash.log("%cMist.log ::", key, data)
+    @on "mist:command.list",            (key, data, args...) => dash.debug(key, data, args)
 
     # data messages
     @on "mist:data",                    (key, data, args...) => dash.debug key, data, args

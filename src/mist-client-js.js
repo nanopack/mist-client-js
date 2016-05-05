@@ -32,7 +32,7 @@ Mist = (function() {
       return function() {
         var args, evnt, key;
         key = arguments[0], evnt = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.info(key, evnt, args);
+        return dash.debug(key, evnt, args);
       };
     })(this));
     this.on("mist:_socket.onerror", (function(_this) {
@@ -81,7 +81,7 @@ Mist = (function() {
       return function() {
         var args, data, key;
         key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return dash.log("%cMist.log ::", key, data);
+        return dash.debug(key, data, args);
       };
     })(this));
     this.on("mist:data", (function(_this) {
