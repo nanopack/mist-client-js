@@ -66,10 +66,7 @@ _watch = () ->
   gulp.watch "./stage/*.jade", -> _markup()
   gulp.watch "./src/*.coffee", -> _scripts()
 
-
 ## tasks
 gulp.task 'bump', () -> _bump(gulp.env.type)
 gulp.task 'compile', () -> _markup(); _scripts()
-
-# 
 gulp.task 'default', [ 'compile' ], -> _watch()
