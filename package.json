@@ -1,6 +1,6 @@
 {
   "name": "mist-client-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A javascript client connecting to and consuming nanobox/mist messages",
   "author": "Steve Domino <sdomino@pagodabox.com>",
   "contributors": [],

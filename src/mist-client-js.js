@@ -11,8 +11,8 @@ Mist = (function() {
     Eventify.extend(this);
     this.dash = new dash();
     this.dash.setPrefix("Mist");
-    this.dash.setLevel(this.options.logLevel || "DEBUG");
-    if (this.options.logsEnabled) {
+    this.dash.setLevel(this.options.logging.level || "INFO");
+    if (this.options.logging.enabled) {
       this.dash.enableLogs();
     }
     this.on("mist:_socket.onopen", (function(_this) {
