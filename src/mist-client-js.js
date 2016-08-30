@@ -57,20 +57,6 @@ Mist = (function() {
         return _this.dash.debug(key, data, args);
       };
     })(this));
-    this.on("mist:command.subscribe", (function(_this) {
-      return function() {
-        var args, data, key;
-        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return _this.dash.debug(key, data, args);
-      };
-    })(this));
-    this.on("mist:command.unsubscribe", (function(_this) {
-      return function() {
-        var args, data, key;
-        key = arguments[0], data = arguments[1], args = 3 <= arguments.length ? slice.call(arguments, 2) : [];
-        return _this.dash.debug(key, data, args);
-      };
-    })(this));
     this.on("mist:command.publish", (function(_this) {
       return function() {
         var args, data, key;
@@ -167,12 +153,6 @@ Mist = (function() {
             switch (command) {
               case "ping":
                 _this.fire("mist:command.ping", data);
-                break;
-              case "subscribe":
-                _this.fire("mist:command.subscribe", data);
-                break;
-              case "unsubscribe":
-                _this.fire("mist:command.unsubscribe", data);
                 break;
               case "list":
                 _this.fire("mist:command.list", data);

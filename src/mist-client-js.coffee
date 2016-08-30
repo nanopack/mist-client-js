@@ -34,8 +34,8 @@
 
     # command messages
     @on "mist:command.ping",            (key, data, args...) => @dash.debug key, data, args
-    @on "mist:command.subscribe",       (key, data, args...) => @dash.debug key, data, args
-    @on "mist:command.unsubscribe",     (key, data, args...) => @dash.debug key, data, args
+    # @on "mist:command.subscribe",       (key, data, args...) => @dash.debug key, data, args
+    # @on "mist:command.unsubscribe",     (key, data, args...) => @dash.debug key, data, args
     @on "mist:command.publish",         (key, data, args...) => @dash.debug key, data, args
     @on "mist:command.list",            (key, data, args...) => @dash.debug(key, data, args)
 
@@ -85,8 +85,8 @@
       if command = data?.command
         switch command
           when "ping"        then @fire "mist:command.ping", data
-          when "subscribe"   then @fire "mist:command.subscribe", data
-          when "unsubscribe" then @fire "mist:command.unsubscribe", data
+          # when "subscribe"   then @fire "mist:command.subscribe", data
+          # when "unsubscribe" then @fire "mist:command.unsubscribe", data
           when "list"        then @fire "mist:command.list", data
 
           # on the publish command we want to fire a generic publish event but

@@ -8,8 +8,10 @@ Creating a new client is very easy, and only has a small amount of configurable 
 
 # NOTE: by default logs are disabled and set to "DEBUG"
 options = {
-  logsEnabled: true
-  logLevel:    "INFO" # 'DEBUG', 'INFO', 'WARN', 'ALERT', 'ERROR', 'SILENT'
+  logging: {
+    enabled: true
+    level:   "INFO" # 'DEBUG', 'INFO', 'WARN', 'ALERT', 'ERROR', 'SILENT'
+  }
 }
 
 #
@@ -22,7 +24,7 @@ Once the client is created you simply need to connect it to a running mist serve
 
 If authentication is enabled on the server you **must** pass an authentication token to connect:
 
-`mist.connect("ws://127.0.0.1:8888?x-auth-token=TOKEN")`
+`mist.connect("ws://127.0.0.1:8888?X-AUTH-TOKEN=TOKEN")`
 
 NOTE: By default mist starts a web socket server running at 127.0.0.1:8888 (as in the example above), which probably wont be the same IP you'll connect to.
 
@@ -36,7 +38,6 @@ tags = mist.subscribe(['hello'])
 #
 mist.on "mist:data", (e) => # do stuff
 ```
-
 
 ## Available Commands
 
@@ -101,8 +102,8 @@ Below is a list of all of the events that the mist client will fire:
 | `mist:_socket.onerror` | the socket errors |
 | `mist:_socket.onclose` | the socket disconnects |
 | `mist:command.ping` | mist is pinged |
-| `mist:command.subscribe` | tags are subscribed |
-| `mist:command.unsubscribe` | tags are unsubscribed |
+| `mist:command.subscribe` | deprecated |
+| `mist:command.unsubscribe` | deprecated |
 | `mist:command.publish` | tags are published |
 | `mist:command.publish:[tag,tag,tag]` | specific tags are published |
 | `mist:command.publish:tag` | for each specific tag |
@@ -112,6 +113,8 @@ Below is a list of all of the events that the mist client will fire:
 | `mist:metadata.action:create` | metadata is created |
 | `mist:metadata.action:update` | metadata is updated |
 | `mist:metadata.action:destroy` | metadata is destroyed |
+
+NOTE: if the client needs to know when tags are subscribed or unsubscribed they can get a list of all current tags after either of those commands and check to make sure the tags are/aren't there
 
 ## Data formats
 
