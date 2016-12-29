@@ -64,7 +64,9 @@
     # store this so the client can reconnect if needed
     @_socket_url = socket_url
 
-    #
+    # because a websocket cannot be reopened after it's been closed, connect
+    # will always create a new connection. It is up to the consumer of this
+    # client to responsibly handle the connection/disconnection of the socket.
     @_socket = new WebSocket( socket_url )
 
     #
