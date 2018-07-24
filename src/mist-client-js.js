@@ -286,6 +286,28 @@ Mist = (function() {
       command: "ping"
     })) : void 0;
   };
+  
+  Mist.prototype.publish = function (tags, data) {
+    var ref;
+    if (tags == null) {
+      tags = [];
+    }
+    if (this.is_connected()) {
+      if ((ref = this._socket) !== null) {
+        ref.send(JSON.stringify({
+          command: 'publish',
+          tags: tags,
+          data: data
+        }));
+      }
+    } else {
+      this.once('mist:_socket.onopen', (function (_this) {
+        return function (e) {
+          return _this.publish(tags, data)
+        }
+      })(this));
+    }
+  };
 
   return Mist;
 
